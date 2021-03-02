@@ -10,7 +10,8 @@ class Adapter: RecyclerView.Adapter<Adapter.ViewHolder>() {
     private lateinit var dataSource: MovieSource
 
     fun setDataSource(dataSource : MovieSource) {
-        this.dataSource = dataSource;
+        this.dataSource = dataSource
+        notifyDataSetChanged()
     }
     class ViewHolder(itemView: View) :RecyclerView.ViewHolder(itemView){
 
