@@ -19,9 +19,6 @@ class MainViewModel(
         getDataFromLocalSource(1)
     }
 
-
-
-
     private fun getDataFromLocalSource(genre: Int) {
         liveDataToObserve.value = AppState.Loading
         Thread {
