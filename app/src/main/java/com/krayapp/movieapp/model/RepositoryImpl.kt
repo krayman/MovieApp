@@ -2,8 +2,10 @@ package com.krayapp.movieapp.model
 
 class RepositoryImpl:Repository {
 
-    override fun getMovieFromServer(): MovieInfo {
-        return MovieInfo()
+
+
+    override fun getMovieFromServer(): List<MovieInfo> {
+        return listOf()
     }
 
     override fun getAdventureMovieFromLocal(): List<MovieInfo> {

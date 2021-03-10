@@ -10,7 +10,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.krayapp.movieapp.R
 import com.krayapp.movieapp.databinding.MainFragmentBinding
+import com.krayapp.movieapp.model.MovieDTO
 import com.krayapp.movieapp.model.MovieInfo
+import com.krayapp.movieapp.model.MovieLoader
+import com.krayapp.movieapp.model.getScaredMovie
 import com.krayapp.movieapp.ui.main.aboutMovie.AboutMovieFragment
 import com.krayapp.movieapp.viewmodel.AppState
 import com.krayapp.movieapp.viewmodel.MainViewModel
@@ -19,6 +22,16 @@ class ListerFragment : Fragment() {
     private var _binding: MainFragmentBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
+    private val onLoadListener:MovieLoader.MovieLoaderListener =
+        object : MovieLoader.MovieLoaderListener{
+            override fun onLoaded(movieDTO: MovieDTO) {
+                movieListDisplay(movieDTO)
+            }
+
+            override fun onFailed(throwable: Throwable) {
+            }
+
+        }
     private val adapter = Adapter(object : OnItemViewClickListener {
         override fun onItemViewClick(movie: MovieInfo) {
             val manager = activity?.supportFragmentManager
@@ -63,6 +76,10 @@ class ListerFragment : Fragment() {
                 binding.loadingLayout.visibility = View.GONE
             }
         }
+    }
+
+    private fun movieListDisplay (movieDTO: MovieDTO){
+
     }
     companion object {
         fun newInstance() =

@@ -15,8 +15,23 @@ class MainViewModel(
     fun getAdventureMovieFromLocal() {
         getDataFromLocalSource(0)
     }
+    fun getMovieDataFromServer(){
+        getDataFromServer()
+    }
     fun getScaredMovieFromLocal() {
         getDataFromLocalSource(1)
+    }
+
+    private fun getDataFromServer(){
+        liveDataToObserve.value = AppState.Loading
+        Thread{
+            sleep(5000)
+            liveDataToObserve.postValue(
+                AppState.Success(repositoryImpl.getMovieFromServer())
+            )
+
+
+        }.start()
     }
 
     private fun getDataFromLocalSource(genre: Int) {
@@ -24,7 +39,8 @@ class MainViewModel(
         Thread {
             sleep(1000)
             liveDataToObserve.postValue(
-                AppState.Success(if (genre == 0) repositoryImpl.getAdventureMovieFromLocal()
+                AppState.Success(if (genre == 0)
+                    repositoryImpl.getAdventureMovieFromLocal()
                 else repositoryImpl.getScaredMovieFromLocal()))
         }.start()
     }
