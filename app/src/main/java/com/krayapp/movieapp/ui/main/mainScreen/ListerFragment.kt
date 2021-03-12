@@ -1,9 +1,11 @@
 package com.krayapp.movieapp.ui.main.mainScreen
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
@@ -22,6 +24,8 @@ class ListerFragment : Fragment() {
     private var _binding: MainFragmentBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
+    @RequiresApi(Build.VERSION_CODES.N)
+    private val movieLoader : MovieLoader = MovieLoader()
     private val onLoadListener:MovieLoader.MovieLoaderListener =
         object : MovieLoader.MovieLoaderListener{
             override fun onLoaded(movieDTO: MovieDTO) {
@@ -55,9 +59,11 @@ class ListerFragment : Fragment() {
         return binding.getRoot()
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerAdventure.adapter = adapter
+        binding.loadButton.setOnClickListener {movieLoader.loadMovieData()}
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.getLiveData().observe(viewLifecycleOwner, Observer { renderData(it) })
         viewModel.getAdventureMovieFromLocal()
