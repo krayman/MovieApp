@@ -24,18 +24,7 @@ class ListerFragment : Fragment() {
     private var _binding: MainFragmentBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
-    @RequiresApi(Build.VERSION_CODES.N)
-    private val movieLoader : MovieLoader = MovieLoader()
-    private val onLoadListener:MovieLoader.MovieLoaderListener =
-        object : MovieLoader.MovieLoaderListener{
-            override fun onLoaded(movieDTO: MovieDTO) {
-                movieListDisplay(movieDTO)
-            }
 
-            override fun onFailed(throwable: Throwable) {
-            }
-
-        }
     private val adapter = Adapter(object : OnItemViewClickListener {
         override fun onItemViewClick(movie: MovieInfo) {
             val manager = activity?.supportFragmentManager
@@ -63,12 +52,12 @@ class ListerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerAdventure.adapter = adapter
-        binding.loadButton.setOnClickListener {movieLoader.loadMovieData()}
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.getLiveData().observe(viewLifecycleOwner, Observer { renderData(it) })
-        viewModel.getAdventureMovieFromLocal()
+        viewModel.getMovieDataFromServer()
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Success -> {
@@ -84,8 +73,18 @@ class ListerFragment : Fragment() {
         }
     }
 
-    private fun movieListDisplay (movieDTO: MovieDTO){
+    private fun dtoToMovieInfo(movieDTO: MovieDTO) {
+        val movieInfoMutableList: MutableList<MovieInfo> = mutableListOf()
 
+        for (movieDTO in movieDTO.results) {
+            movieInfoMutableList.add(
+                MovieInfo(
+                    movieDTO.title,
+                    movieDTO.overview,
+                    movieDTO.vote_average
+                )
+            )
+        }
     }
     companion object {
         fun newInstance() =
