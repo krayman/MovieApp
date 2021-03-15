@@ -13,7 +13,7 @@ class Adapter(private var onItemViewClickListener: OnItemViewClickListener?) :
     RecyclerView.Adapter<Adapter.ViewHolder>() {
     private var movieData: List<MovieInfo> = listOf()
 
-    fun setDataSource(movieData: List<MovieInfo>) {
+    fun setDataSource(movieData: MutableList<MovieInfo>) {
         this.movieData = movieData
         notifyDataSetChanged()
     }

@@ -25,7 +25,7 @@ class MainViewModel(
     private fun getDataFromServer(){
         liveDataToObserve.value = AppState.Loading
         Thread{
-            sleep(5000)
+            sleep(1000)
             liveDataToObserve.postValue(
                 AppState.Success(repositoryImpl.getMovieFromServer())
             )

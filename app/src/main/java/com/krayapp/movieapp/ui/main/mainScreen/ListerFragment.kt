@@ -24,7 +24,17 @@ class ListerFragment : Fragment() {
     private var _binding: MainFragmentBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
+    @RequiresApi(Build.VERSION_CODES.N)
+    private val onLoadListener: MovieLoader.MovieLoaderListener =
+        object : MovieLoader.MovieLoaderListener {
+            override fun onLoaded(movieDTO: MovieDTO) {
+                setMovieList(movieDTO)
+            }
 
+            override fun onFailed(throwable: Throwable) {
+            }
+
+        }
     private val adapter = Adapter(object : OnItemViewClickListener {
         override fun onItemViewClick(movie: MovieInfo) {
             val manager = activity?.supportFragmentManager
@@ -51,10 +61,17 @@ class ListerFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val listener = MovieLoader(onLoadListener)
+        listener.loadMovieData()
         binding.recyclerAdventure.adapter = adapter
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+       /* viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.getLiveData().observe(viewLifecycleOwner, Observer { renderData(it) })
-        viewModel.getMovieDataFromServer()
+        viewModel.getMovieDataFromServer()*/
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun setMovieList(movieDTO: MovieDTO){
+        adapter.setDataSource(dtoToMovieInfo(movieDTO))
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -73,9 +90,10 @@ class ListerFragment : Fragment() {
         }
     }
 
-    private fun dtoToMovieInfo(movieDTO: MovieDTO) {
-        val movieInfoMutableList: MutableList<MovieInfo> = mutableListOf()
+    @RequiresApi(Build.VERSION_CODES.N)
 
+    private fun dtoToMovieInfo(movieDTO: MovieDTO): MutableList<MovieInfo> {
+        val movieInfoMutableList: MutableList<MovieInfo> = mutableListOf()
         for (movieDTO in movieDTO.results) {
             movieInfoMutableList.add(
                 MovieInfo(
@@ -85,6 +103,7 @@ class ListerFragment : Fragment() {
                 )
             )
         }
+        return movieInfoMutableList
     }
     companion object {
         fun newInstance() =

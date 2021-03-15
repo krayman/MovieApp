@@ -4,38 +4,37 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 
 class RepositoryImpl : Repository {
-    var movieList: MutableList<MovieInfo> = mutableListOf()
+   /* lateinit var dtoFromServer : MovieDTO
     @RequiresApi(Build.VERSION_CODES.N)
     private val onLoadListener: MovieLoader.MovieLoaderListener =
         object : MovieLoader.MovieLoaderListener {
             override fun onLoaded(movieDTO: MovieDTO) {
-                 movieList = dtoToMovieInfo(movieDTO)
+                dtoFromServer = movieDTO
             }
 
             override fun onFailed(throwable: Throwable) {
             }
 
         }
-
+    @RequiresApi(Build.VERSION_CODES.N)
+    val listener = MovieLoader(onLoadListener)
     private fun dtoToMovieInfo(movieDTO: MovieDTO): MutableList<MovieInfo> {
         val movieInfoMutableList: MutableList<MovieInfo> = mutableListOf()
         for (movieDTO in movieDTO.results) {
-            movieInfoMutableList.add(
-                MovieInfo(
-                    movieDTO.title,
-                    movieDTO.overview,
-                    movieDTO.vote_average
+                movieInfoMutableList.add(
+                    MovieInfo(
+                        movieDTO.title,
+                        movieDTO.overview,
+                        movieDTO.vote_average
+                    )
                 )
-            )
-        }
+            }
         return movieInfoMutableList
-    }
+    }*/
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun getMovieFromServer(): MutableList<MovieInfo> {
-        val listener = MovieLoader(onLoadListener)
-        listener.loadMovieData()
-        return movieList
+        return mutableListOf()
     }
 
     override fun getAdventureMovieFromLocal(): List<MovieInfo> {
