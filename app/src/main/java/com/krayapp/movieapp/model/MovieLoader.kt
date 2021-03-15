@@ -14,15 +14,14 @@ import javax.net.ssl.HttpsURLConnection
 
 @RequiresApi(Build.VERSION_CODES.N)
 class MovieLoader(private val movieLoaderListener: MovieLoaderListener) {
-    lateinit var movieList: MutableList<MovieInfo>
-    private final val MOVIE_API_KEY = "58cb0298f8a3d11c2c5b6afa5a8c7292" // TMDb
+    private val MOVIE_API_KEY = "58cb0298f8a3d11c2c5b6afa5a8c7292" // TMDb
 
     @RequiresApi(Build.VERSION_CODES.N)
-    fun loadMovieData() {
+    fun loadMovieData(genre: String) {
         try {
-            val uri = URL("https://api.tmdb.org/3/movie/popular?api_key=${MOVIE_API_KEY}")
+            val uri = URL("https://api.tmdb.org/3/movie/${genre}?api_key=${MOVIE_API_KEY}")
             val handler = Handler(Looper.getMainLooper())
-            Thread (Runnable {
+            Thread(Runnable {
                 var urlConnection: HttpsURLConnection? = null
                 try {
                     urlConnection = uri.openConnection() as HttpsURLConnection
@@ -32,7 +31,7 @@ class MovieLoader(private val movieLoaderListener: MovieLoaderListener) {
                         BufferedReader(InputStreamReader(urlConnection.inputStream))
                     val movieDTO: MovieDTO =
                         Gson().fromJson<MovieDTO>(getLines(bufferedReader), MovieDTO::class.java)
-                    handler.post { movieLoaderListener.onLoaded(movieDTO)}
+                    handler.post { movieLoaderListener.onLoaded(movieDTO, genre)}
                 } catch (e: Exception) {
                     e.printStackTrace()
                 } finally {
@@ -45,7 +44,7 @@ class MovieLoader(private val movieLoaderListener: MovieLoaderListener) {
     }
 
     interface MovieLoaderListener {
-        fun onLoaded(movieDTO: MovieDTO)
+        fun onLoaded(movieDTO: MovieDTO, genre: String)
         fun onFailed(throwable: Throwable)
     }
 
