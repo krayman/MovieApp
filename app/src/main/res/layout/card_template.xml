@@ -23,6 +23,7 @@
                 android:src="@drawable/doge" />
         </androidx.cardview.widget.CardView>
         <TextView
+            android:maxLength="20"
             android:id="@+id/title_template"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

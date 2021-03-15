@@ -5,17 +5,48 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.mainScreen.ListerFragment"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    tools:context=".ui.main.mainScreen.ListerFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:orientation="horizontal"
-        android:id="@+id/recycler_adventure"
+    <TextView
+        android:id="@+id/popularTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="@dimen/default_margin"
+        android:text="@string/popular"
+        android:textSize="@dimen/titleSize"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/upcomingTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/default_margin"
+        android:text="@string/top_rated"
+        android:textSize="@dimen/titleSize"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recycler_popular" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_popular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/popularTitle"
+        tools:listitem="@layout/card_template" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_toprated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/upcomingTitle"
         tools:listitem="@layout/card_template" />
 
     <FrameLayout
@@ -25,6 +56,7 @@
         android:background="@color/loadingBackground"
         android:visibility="gone"
         tools:visibility="visible">
+
 
         <ProgressBar
             style="?android:attr/progressBarStyleLarge"

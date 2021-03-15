@@ -12,20 +12,17 @@ class MainViewModel(
 ) : ViewModel() {
     fun getLiveData() = liveDataToObserve
 
-    fun getAdventureMovieFromLocal() {
-        getDataFromLocalSource(0)
-    }
-    fun getScaredMovieFromLocal() {
-        getDataFromLocalSource(1)
+    fun getMovieDataFromServer(){
+        getDataFromServer()
     }
 
-    private fun getDataFromLocalSource(genre: Int) {
+    private fun getDataFromServer(){
         liveDataToObserve.value = AppState.Loading
-        Thread {
+        Thread{
             sleep(1000)
             liveDataToObserve.postValue(
-                AppState.Success(if (genre == 0) repositoryImpl.getAdventureMovieFromLocal()
-                else repositoryImpl.getScaredMovieFromLocal()))
+                AppState.Success(repositoryImpl.getMovieFromServer())
+            )
         }.start()
     }
 }

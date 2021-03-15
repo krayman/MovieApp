@@ -2,4 +2,5 @@
 <resources>
     <dimen name="cardCorner">10dp</dimen>
     <dimen name="default_margin">10dp</dimen>
+    <dimen name="titleSize">30sp</dimen>
 </resources>
