@@ -1,18 +1,22 @@
 package com.krayapp.movieapp.ui.main.mainScreen
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.ConnectivityManager.CONNECTIVITY_ACTION
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.material.snackbar.Snackbar
 import com.krayapp.movieapp.R
 import com.krayapp.movieapp.databinding.MainFragmentBinding
 import com.krayapp.movieapp.model.MovieDTO
@@ -29,6 +33,13 @@ const val GENRE_EXTRA = "GENRE_EXTRA"
 const val DETAILS_RESPONSE_SUCCESS_EXTRA = "RESPONSE SUCCESS"
 
 class ListerFragment : Fragment() {
+    private val connectStatusReceiver: BroadcastReceiver = object : BroadcastReceiver(){
+        @SuppressLint("ShowToast")
+        override fun onReceive(context: Context?, intent: Intent?) {
+            Toast.makeText(context, "Internet changed", Toast.LENGTH_LONG)
+        }
+
+    }
     private val loadResultsReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         @RequiresApi(Build.VERSION_CODES.N)
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -54,6 +65,7 @@ class ListerFragment : Fragment() {
             LocalBroadcastManager.getInstance(it)
                 .registerReceiver(loadResultsReceiver, IntentFilter(MOVIE_INTENT_FILTER))
         }
+        context?.registerReceiver(connectStatusReceiver, IntentFilter(CONNECTIVITY_ACTION))
     }
 
     private val popularAdapter = Adapter(object : OnItemViewClickListener {
