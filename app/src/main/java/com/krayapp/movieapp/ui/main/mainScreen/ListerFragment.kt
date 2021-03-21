@@ -15,6 +15,8 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.snackbar.Snackbar
 import com.krayapp.movieapp.R
@@ -23,6 +25,7 @@ import com.krayapp.movieapp.model.MovieDTO
 import com.krayapp.movieapp.model.MovieInfo
 import com.krayapp.movieapp.model.MovieService
 import com.krayapp.movieapp.ui.main.aboutMovie.AboutMovieFragment
+import com.krayapp.movieapp.viewmodel.AppState
 import com.krayapp.movieapp.viewmodel.MainViewModel
 
 const val MOVIE_INTENT_FILTER = "DETAILS INTENT FILTER"
@@ -31,9 +34,12 @@ const val GENRE_TYPE = "GENRE TYPE"
 const val MOVIE_LIST_EXTRA = "MOVIE LIST EXTRA"
 const val GENRE_EXTRA = "GENRE_EXTRA"
 const val DETAILS_RESPONSE_SUCCESS_EXTRA = "RESPONSE SUCCESS"
+const val API_KEY = "58cb0298f8a3d11c2c5b6afa5a8c7292"
+const val POPULAR = "popular"
+const val TOP_RATED = "top_rated"
 
 class ListerFragment : Fragment() {
-    private val connectStatusReceiver: BroadcastReceiver = object : BroadcastReceiver(){
+    private val connectStatusReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         @SuppressLint("ShowToast")
         override fun onReceive(context: Context?, intent: Intent?) {
             Toast.makeText(context, "Internet changed", Toast.LENGTH_LONG)
@@ -46,9 +52,10 @@ class ListerFragment : Fragment() {
             when (intent?.getStringExtra(DETAILS_LOAD_RESULT_EXTRA)) {
                 DETAILS_RESPONSE_SUCCESS_EXTRA -> {
                     val genre = intent.getStringExtra(GENRE_TYPE).toString()
-                    val mutableList : MutableList<MovieInfo> =
-                        intent.getParcelableArrayListExtra<MovieInfo>(MOVIE_LIST_EXTRA)?.toMutableList()!!
-                    setMovieList(mutableList,genre)
+                    val mutableList: MutableList<MovieInfo> =
+                        intent.getParcelableArrayListExtra<MovieInfo>(MOVIE_LIST_EXTRA)
+                            ?.toMutableList()!!
+                    setMovieList(mutableList, genre)
                 }
             }
         }
@@ -57,7 +64,8 @@ class ListerFragment : Fragment() {
 
     private var _binding: MainFragmentBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModelPopular: MainViewModel
+    private lateinit var viewModelTopRated: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,45 +100,46 @@ class ListerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerPopular.adapter = popularAdapter
         binding.recyclerToprated.adapter = topRatedAdapter
-        loadMovieData("top_rated")
-        loadMovieData("popular")
-        /* viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        viewModel.getLiveData().observe(viewLifecycleOwner, Observer { renderData(it) })
-        viewModel.getMovieDataFromServer()*/
+        viewModelPopular = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModelPopular.liveData.observe(viewLifecycleOwner, Observer { renderData(it) })
+        viewModelPopular.getMovieDataFromServer(POPULAR, API_KEY)
+
+        /*viewModelTopRated = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModelTopRated.liveData.observe(viewLifecycleOwner, Observer { renderData(it) })
+        viewModelTopRated.getMovieDataFromServer(TOP_RATED, API_KEY)*/
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    private fun setMovieList(movieList:MutableList<MovieInfo>, genre: String) {
-        if (genre == "popular") {
+    private fun setMovieList(movieList: MutableList<MovieInfo>, genre: String) {
+        if (genre == POPULAR) {
             popularAdapter.setDataSource(movieList)
         }
-        if (genre == "top_rated") {
+        if (genre == TOP_RATED) {
             topRatedAdapter.setDataSource(movieList)
         }
     }
 
-    private fun loadMovieData(genre: String) {
-        context?.let {
-            it.startService(Intent(it, MovieService::class.java).apply {
-                putExtra(GENRE_EXTRA, genre)
-            })
-        }
-    }
 
 
+    @SuppressLint("ShowToast")
     @RequiresApi(Build.VERSION_CODES.N)
-    private fun dtoToMovieInfo(movieDTO: MovieDTO): MutableList<MovieInfo> {
-        val movieInfoMutableList: MutableList<MovieInfo> = mutableListOf()
-        for (movieDTO in movieDTO.results) {
-            movieInfoMutableList.add(
-                MovieInfo(
-                    movieDTO.title,
-                    movieDTO.overview,
-                    movieDTO.vote_average
-                )
-            )
+    private fun renderData(appState: AppState) {
+        when (appState) {
+            is AppState.Success -> {
+                binding.main.visibility = View.VISIBLE
+                binding.loadingLayout.visibility = View.GONE
+                setMovieList(appState.movieData, appState.genre)
+            }
+            is AppState.Loading -> {
+                binding.main.visibility = View.GONE
+                binding.loadingLayout.visibility = View.VISIBLE
+            }
+            is AppState.Error -> {
+                binding.main.visibility = View.VISIBLE
+                binding.loadingLayout.visibility = View.GONE
+                Toast.makeText(context, "Ошибка загрузки", Toast.LENGTH_LONG)
+            }
         }
-        return movieInfoMutableList
     }
 
     private fun movieClickListener(movie: MovieInfo) {

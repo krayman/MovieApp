@@ -4,9 +4,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.krayapp.movieapp.R
 import com.krayapp.movieapp.model.MovieInfo
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.card_template.view.*
 
 class Adapter(private var onItemViewClickListener: OnItemViewClickListener?) :
@@ -38,6 +40,7 @@ class Adapter(private var onItemViewClickListener: OnItemViewClickListener?) :
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         fun bind(movie: MovieInfo) {
+            val img = itemView.findViewById<AppCompatImageView>(R.id.card4img).imageCard
             itemView.findViewById<TextView>(R.id.full_card_template).title_template.text =
                 movie.title
             itemView.findViewById<TextView>(R.id.full_card_template).description_template.text =
@@ -47,6 +50,10 @@ class Adapter(private var onItemViewClickListener: OnItemViewClickListener?) :
             itemView.setOnClickListener {
                 onItemViewClickListener?.onItemViewClick(movie)
             }
+            Picasso
+                .get()
+                .load("https://image.tmdb.org/t/p/w500/${movie.imagePath}")
+                .into(img)
         }
     }
 }
