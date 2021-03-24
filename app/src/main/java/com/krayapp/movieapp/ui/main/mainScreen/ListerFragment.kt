@@ -18,12 +18,9 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.google.android.material.snackbar.Snackbar
 import com.krayapp.movieapp.R
 import com.krayapp.movieapp.databinding.MainFragmentBinding
-import com.krayapp.movieapp.model.MovieDTO
 import com.krayapp.movieapp.model.MovieInfo
-import com.krayapp.movieapp.model.MovieService
 import com.krayapp.movieapp.ui.main.aboutMovie.AboutMovieFragment
 import com.krayapp.movieapp.viewmodel.AppState
 import com.krayapp.movieapp.viewmodel.MainViewModel
@@ -60,7 +57,6 @@ class ListerFragment : Fragment() {
             }
         }
     }
-
 
     private var _binding: MainFragmentBinding? = null
     private val binding get() = _binding!!

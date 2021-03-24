@@ -23,7 +23,7 @@ class AboutMovieFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = AboutMovieBinding.inflate(inflater, container, false)
-        return binding.getRoot()
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
