@@ -9,5 +9,6 @@ data class MovieDTO(
 data class FactDTO(
     val title: String,
     val overview: String,
-    val vote_average: Float
+    val vote_average: Float,
+    val poster_path: String
 )

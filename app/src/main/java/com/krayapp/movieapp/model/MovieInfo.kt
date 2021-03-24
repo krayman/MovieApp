@@ -5,7 +5,8 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class MovieInfo(
-    val title: String? = "First Movie",
-    val description: String? = "It will be the best app",
-    val rate: Float? = 5.0f
+    val title: String?,
+    val description: String?,
+    val rate: Float?,
+    val imagePath:String?
 ):Parcelable

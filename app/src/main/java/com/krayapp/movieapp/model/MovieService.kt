@@ -81,7 +81,8 @@ class MovieService(name: String = "MovieService") : IntentService(name) {
                 MovieInfo(
                     movieDTO.title,
                     movieDTO.overview,
-                    movieDTO.vote_average
+                    movieDTO.vote_average,
+                    movieDTO.poster_path
                 )
             )
         }
