@@ -35,6 +35,8 @@ const val API_KEY = "58cb0298f8a3d11c2c5b6afa5a8c7292"
 const val POPULAR = "popular"
 const val TOP_RATED = "top_rated"
 
+const val IS_ADULT_KEY = "ADULT"
+
 class ListerFragment : Fragment() {
     private val connectStatusReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         @SuppressLint("ShowToast")
@@ -88,7 +90,7 @@ class ListerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = MainFragmentBinding.inflate(inflater, container, false)
-        return binding.getRoot()
+        return binding.root
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -98,7 +100,9 @@ class ListerFragment : Fragment() {
         binding.recyclerToprated.adapter = topRatedAdapter
         viewModelPopular = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModelPopular.liveData.observe(viewLifecycleOwner, Observer { renderData(it) })
-        viewModelPopular.getMovieDataFromServer(POPULAR, API_KEY)
+
+        filmsAreAdultorNot()
+//        viewModelPopular.getMovieDataFromServer(POPULAR, API_KEY)
 
         /*viewModelTopRated = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModelTopRated.liveData.observe(viewLifecycleOwner, Observer { renderData(it) })
@@ -138,6 +142,13 @@ class ListerFragment : Fragment() {
         }
     }
 
+    private fun filmsAreAdultorNot(){
+        activity?.let {
+            adult = it.getPreferences(Context.MODE_PRIVATE).getBoolean(IS_ADULT_KEY, false)
+            viewModelPopular.getMovieDataFromServer(POPULAR, API_KEY)
+        }
+
+    }
     private fun movieClickListener(movie: MovieInfo) {
         val manager = activity?.supportFragmentManager
         if (manager != null) {
@@ -159,6 +170,7 @@ class ListerFragment : Fragment() {
     }
 
     companion object {
+        var adult : Boolean? = null
         fun newInstance() =
             ListerFragment()
     }

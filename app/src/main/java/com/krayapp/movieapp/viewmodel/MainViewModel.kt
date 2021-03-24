@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.krayapp.movieapp.model.*
+import com.krayapp.movieapp.ui.main.mainScreen.ListerFragment.Companion.adult
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -57,6 +58,7 @@ class MainViewModel(
     private fun dtoToMovieInfo(movieDTO: MovieDTO): MutableList<MovieInfo> {
         val movieInfoMutableList: MutableList<MovieInfo> = mutableListOf()
         for (movieDTO in movieDTO.results) {
+            if (movieDTO.adult == adult || movieDTO.adult == false)
             movieInfoMutableList.add(
                 MovieInfo(
                     movieDTO.title,
