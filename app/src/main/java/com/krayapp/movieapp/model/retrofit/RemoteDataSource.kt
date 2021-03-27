@@ -1,6 +1,7 @@
-package com.krayapp.movieapp.model
+package com.krayapp.movieapp.model.retrofit
 
 import com.google.gson.GsonBuilder
+import com.krayapp.movieapp.model.MovieDTO
 import retrofit2.Callback
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

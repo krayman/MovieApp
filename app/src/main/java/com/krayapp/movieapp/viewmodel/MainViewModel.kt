@@ -4,8 +4,17 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.krayapp.movieapp.app.App
+import com.krayapp.movieapp.app.App.Companion.getMovieDAO
+import com.krayapp.movieapp.app.AppState
 import com.krayapp.movieapp.model.*
+import com.krayapp.movieapp.model.localDB.LocalRepository
+import com.krayapp.movieapp.model.localDB.LocalRepositoryImpl
+import com.krayapp.movieapp.model.retrofit.MovieRepImpl
+import com.krayapp.movieapp.model.retrofit.MovieRepository
+import com.krayapp.movieapp.model.retrofit.RemoteDataSource
 import com.krayapp.movieapp.ui.main.mainScreen.ListerFragment.Companion.adult
+import com.krayapp.movieapp.utils.dtoToMovieInfo
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -15,10 +24,17 @@ private const val SERVER_ERROR = "Ошибка сервера"
 private const val REQUEST_ERROR = "Ошибка запроса на сервер"
 
 class MainViewModel(
+    private val cacheRepository: LocalRepository = LocalRepositoryImpl(getMovieDAO()),
     val liveData: MutableLiveData<AppState> = MutableLiveData(),
-    private val repositoryImpl: MovieRepository = MovieRepImpl(RemoteDataSource())
+    private val repositoryImpl: MovieRepository = MovieRepImpl(
+        RemoteDataSource()
+    )
 ) : ViewModel() {
     lateinit var genre: String
+
+    fun saveMovieToDB(movieInfo: MovieInfo){
+        cacheRepository.saveEntity(movieInfo)
+    }
 
     fun getMovieDataFromServer(genre: String, api_key: String) {
         this.genre = genre
@@ -51,23 +67,7 @@ class MainViewModel(
         ) {
             return AppState.Error(Throwable(CORRUPTED_DATA))
         } else {
-            return AppState.Success(dtoToMovieInfo(serverResponse), genre)
+            return AppState.Success(dtoToMovieInfo(serverResponse))
         }
-    }
-
-    private fun dtoToMovieInfo(movieDTO: MovieDTO): MutableList<MovieInfo> {
-        val movieInfoMutableList: MutableList<MovieInfo> = mutableListOf()
-        for (movieDTO in movieDTO.results) {
-            if (movieDTO.adult == adult || movieDTO.adult == false)
-            movieInfoMutableList.add(
-                MovieInfo(
-                    movieDTO.title,
-                    movieDTO.overview,
-                    movieDTO.vote_average,
-                    movieDTO.poster_path
-                )
-            )
-        }
-        return movieInfoMutableList
     }
 }

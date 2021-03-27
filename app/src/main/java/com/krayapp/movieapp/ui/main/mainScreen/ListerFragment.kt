@@ -22,7 +22,7 @@ import com.krayapp.movieapp.R
 import com.krayapp.movieapp.databinding.MainFragmentBinding
 import com.krayapp.movieapp.model.MovieInfo
 import com.krayapp.movieapp.ui.main.aboutMovie.AboutMovieFragment
-import com.krayapp.movieapp.viewmodel.AppState
+import com.krayapp.movieapp.app.AppState
 import com.krayapp.movieapp.viewmodel.MainViewModel
 
 const val MOVIE_INTENT_FILTER = "DETAILS INTENT FILTER"
@@ -54,7 +54,7 @@ class ListerFragment : Fragment() {
                     val mutableList: MutableList<MovieInfo> =
                         intent.getParcelableArrayListExtra<MovieInfo>(MOVIE_LIST_EXTRA)
                             ?.toMutableList()!!
-                    setMovieList(mutableList, genre)
+                    setMovieList(mutableList)
                 }
             }
         }
@@ -100,25 +100,14 @@ class ListerFragment : Fragment() {
         binding.recyclerToprated.adapter = topRatedAdapter
         viewModelPopular = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModelPopular.liveData.observe(viewLifecycleOwner, Observer { renderData(it) })
-
         filmsAreAdultorNot()
-//        viewModelPopular.getMovieDataFromServer(POPULAR, API_KEY)
-
-        /*viewModelTopRated = ViewModelProvider(this).get(MainViewModel::class.java)
-        viewModelTopRated.liveData.observe(viewLifecycleOwner, Observer { renderData(it) })
-        viewModelTopRated.getMovieDataFromServer(TOP_RATED, API_KEY)*/
+        //viewModelPopular.getMovieDataFromServer(POPULAR, API_KEY)
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    private fun setMovieList(movieList: MutableList<MovieInfo>, genre: String) {
-        if (genre == POPULAR) {
+    private fun setMovieList(movieList: MutableList<MovieInfo>){
             popularAdapter.setDataSource(movieList)
-        }
-        if (genre == TOP_RATED) {
-            topRatedAdapter.setDataSource(movieList)
-        }
     }
-
 
 
     @SuppressLint("ShowToast")
@@ -127,28 +116,29 @@ class ListerFragment : Fragment() {
         when (appState) {
             is AppState.Success -> {
                 binding.main.visibility = View.VISIBLE
-                binding.loadingLayout.visibility = View.GONE
-                setMovieList(appState.movieData, appState.genre)
+                binding.includedLoadingLayout.loadingLayout.visibility = View.GONE
+                setMovieList(appState.movieData)
             }
             is AppState.Loading -> {
                 binding.main.visibility = View.GONE
-                binding.loadingLayout.visibility = View.VISIBLE
+                binding.includedLoadingLayout.loadingLayout.visibility = View.VISIBLE
             }
             is AppState.Error -> {
                 binding.main.visibility = View.VISIBLE
-                binding.loadingLayout.visibility = View.GONE
+                binding.includedLoadingLayout.loadingLayout.visibility = View.GONE
                 Toast.makeText(context, "Ошибка загрузки", Toast.LENGTH_LONG)
             }
         }
     }
 
-    private fun filmsAreAdultorNot(){
+    private fun filmsAreAdultorNot() {
         activity?.let {
             adult = it.getPreferences(Context.MODE_PRIVATE).getBoolean(IS_ADULT_KEY, false)
             viewModelPopular.getMovieDataFromServer(POPULAR, API_KEY)
         }
 
     }
+
     private fun movieClickListener(movie: MovieInfo) {
         val manager = activity?.supportFragmentManager
         if (manager != null) {
@@ -170,7 +160,7 @@ class ListerFragment : Fragment() {
     }
 
     companion object {
-        var adult : Boolean? = null
+        var adult: Boolean? = null
         fun newInstance() =
             ListerFragment()
     }

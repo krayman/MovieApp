@@ -4,13 +4,13 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class MovieCacheEntity (
+data class MovieCacheEntity(
     @PrimaryKey
     val id: Int?,
     val title: String?,
     val description: String?,
     val rate: Float?,
-    val imagePath:String?
-)
-{
+    val imagePath: String?
+
+) {
 }

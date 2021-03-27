@@ -2,7 +2,6 @@ package com.krayapp.movieapp.app
 
 import android.app.Application
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.krayapp.movieapp.room.MovieDAO
 import com.krayapp.movieapp.room.RoomMovieDB
 
