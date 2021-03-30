@@ -10,5 +10,6 @@ data class FactDTO(
     val title: String,
     val overview: String,
     val vote_average: Float,
-    val poster_path: String
+    val poster_path: String,
+    val adult: Boolean
 )

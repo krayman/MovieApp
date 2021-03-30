@@ -1,6 +1,7 @@
-package com.krayapp.movieapp.model
+package com.krayapp.movieapp.model.retrofit
 
 import com.google.gson.GsonBuilder
+import com.krayapp.movieapp.model.MovieDTO
 import retrofit2.Callback
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -13,6 +14,6 @@ class RemoteDataSource {
         .build().create(MovieAPI::class.java)
 
     fun getMovieList(genre:String, api_key: String, callback: Callback<MovieDTO>){
-        movieApi.getMovie(genre, api_key).enqueue(callback)
+        movieApi.getMovie(genre, api_key, "ru-RU").enqueue(callback)
     }
 }

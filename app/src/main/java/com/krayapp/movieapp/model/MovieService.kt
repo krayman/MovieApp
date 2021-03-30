@@ -77,6 +77,7 @@ class MovieService(name: String = "MovieService") : IntentService(name) {
     private fun dtoToMovieInfo(movieDTO: MovieDTO): MutableList<MovieInfo> {
         val movieInfoMutableList: MutableList<MovieInfo> = mutableListOf()
         for (movieDTO in movieDTO.results) {
+//            if(movieDTO.adult == adult/status)
             movieInfoMutableList.add(
                 MovieInfo(
                     movieDTO.title,

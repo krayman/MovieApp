@@ -18,14 +18,11 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.google.android.material.snackbar.Snackbar
 import com.krayapp.movieapp.R
 import com.krayapp.movieapp.databinding.MainFragmentBinding
-import com.krayapp.movieapp.model.MovieDTO
 import com.krayapp.movieapp.model.MovieInfo
-import com.krayapp.movieapp.model.MovieService
 import com.krayapp.movieapp.ui.main.aboutMovie.AboutMovieFragment
-import com.krayapp.movieapp.viewmodel.AppState
+import com.krayapp.movieapp.app.AppState
 import com.krayapp.movieapp.viewmodel.MainViewModel
 
 const val MOVIE_INTENT_FILTER = "DETAILS INTENT FILTER"
@@ -37,6 +34,8 @@ const val DETAILS_RESPONSE_SUCCESS_EXTRA = "RESPONSE SUCCESS"
 const val API_KEY = "58cb0298f8a3d11c2c5b6afa5a8c7292"
 const val POPULAR = "popular"
 const val TOP_RATED = "top_rated"
+
+const val IS_ADULT_KEY = "ADULT"
 
 class ListerFragment : Fragment() {
     private val connectStatusReceiver: BroadcastReceiver = object : BroadcastReceiver() {
@@ -55,12 +54,11 @@ class ListerFragment : Fragment() {
                     val mutableList: MutableList<MovieInfo> =
                         intent.getParcelableArrayListExtra<MovieInfo>(MOVIE_LIST_EXTRA)
                             ?.toMutableList()!!
-                    setMovieList(mutableList, genre)
+                    setMovieList(mutableList)
                 }
             }
         }
     }
-
 
     private var _binding: MainFragmentBinding? = null
     private val binding get() = _binding!!
@@ -92,7 +90,7 @@ class ListerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = MainFragmentBinding.inflate(inflater, container, false)
-        return binding.getRoot()
+        return binding.root
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -102,23 +100,14 @@ class ListerFragment : Fragment() {
         binding.recyclerToprated.adapter = topRatedAdapter
         viewModelPopular = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModelPopular.liveData.observe(viewLifecycleOwner, Observer { renderData(it) })
-        viewModelPopular.getMovieDataFromServer(POPULAR, API_KEY)
-
-        /*viewModelTopRated = ViewModelProvider(this).get(MainViewModel::class.java)
-        viewModelTopRated.liveData.observe(viewLifecycleOwner, Observer { renderData(it) })
-        viewModelTopRated.getMovieDataFromServer(TOP_RATED, API_KEY)*/
+        filmsAreAdultorNot()
+        //viewModelPopular.getMovieDataFromServer(POPULAR, API_KEY)
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    private fun setMovieList(movieList: MutableList<MovieInfo>, genre: String) {
-        if (genre == POPULAR) {
+    private fun setMovieList(movieList: MutableList<MovieInfo>){
             popularAdapter.setDataSource(movieList)
-        }
-        if (genre == TOP_RATED) {
-            topRatedAdapter.setDataSource(movieList)
-        }
     }
-
 
 
     @SuppressLint("ShowToast")
@@ -127,19 +116,27 @@ class ListerFragment : Fragment() {
         when (appState) {
             is AppState.Success -> {
                 binding.main.visibility = View.VISIBLE
-                binding.loadingLayout.visibility = View.GONE
-                setMovieList(appState.movieData, appState.genre)
+                binding.includedLoadingLayout.loadingLayout.visibility = View.GONE
+                setMovieList(appState.movieData)
             }
             is AppState.Loading -> {
                 binding.main.visibility = View.GONE
-                binding.loadingLayout.visibility = View.VISIBLE
+                binding.includedLoadingLayout.loadingLayout.visibility = View.VISIBLE
             }
             is AppState.Error -> {
                 binding.main.visibility = View.VISIBLE
-                binding.loadingLayout.visibility = View.GONE
+                binding.includedLoadingLayout.loadingLayout.visibility = View.GONE
                 Toast.makeText(context, "Ошибка загрузки", Toast.LENGTH_LONG)
             }
         }
+    }
+
+    private fun filmsAreAdultorNot() {
+        activity?.let {
+            adult = it.getPreferences(Context.MODE_PRIVATE).getBoolean(IS_ADULT_KEY, false)
+            viewModelPopular.getMovieDataFromServer(POPULAR, API_KEY)
+        }
+
     }
 
     private fun movieClickListener(movie: MovieInfo) {
@@ -163,6 +160,7 @@ class ListerFragment : Fragment() {
     }
 
     companion object {
+        var adult: Boolean? = null
         fun newInstance() =
             ListerFragment()
     }

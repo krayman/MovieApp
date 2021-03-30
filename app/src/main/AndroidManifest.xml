@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.krayapp.movieapp">
     <application
+        android:name=".app.App"
         android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
