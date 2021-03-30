@@ -3,4 +3,6 @@
     <dimen name="cardCorner">10dp</dimen>
     <dimen name="default_margin">10dp</dimen>
     <dimen name="titleSize">30sp</dimen>
+    <dimen name="title_size">50sp</dimen>
+
 </resources>

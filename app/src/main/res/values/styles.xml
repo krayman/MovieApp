@@ -8,4 +8,7 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="defaultStyle">
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
 </resources>
