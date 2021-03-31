@@ -10,4 +10,10 @@
         android:id="@+id/menu_settings"
         app:showAsAction="never"
         android:title="@string/settings" />
+
+    <item
+        android:id="@+id/openGmap"
+        app:showAsAction="ifRoom"
+        android:icon="@mipmap/gmapicon"
+        android:title="@string/open_gmap" />
 </menu>

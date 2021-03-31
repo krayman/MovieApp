@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import com.krayapp.movieapp.R
 import com.krayapp.movieapp.ui.main.cache.CacheFragment
+import com.krayapp.movieapp.ui.main.LocationClass
 import com.krayapp.movieapp.ui.main.mainScreen.ListerFragment
 import com.krayapp.movieapp.ui.main.settings.SettingsFragment
 
@@ -16,8 +17,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                    .replace(R.id.container, ListerFragment.newInstance())
-                    .commitAllowingStateLoss()
+                .replace(R.id.container, ListerFragment.newInstance())
+                .commitAllowingStateLoss()
         }
     }
 
@@ -41,6 +42,15 @@ class MainActivity : AppCompatActivity() {
                 supportFragmentManager.apply {
                     beginTransaction()
                         .replace(R.id.container, CacheFragment.newInstance())
+                        .addToBackStack("")
+                        .commitAllowingStateLoss()
+                }
+                true
+            }
+            R.id.openGmap -> {
+                supportFragmentManager.apply {
+                    beginTransaction()
+                        .replace(R.id.container, MapsFragment.newInstance())
                         .addToBackStack("")
                         .commitAllowingStateLoss()
                 }

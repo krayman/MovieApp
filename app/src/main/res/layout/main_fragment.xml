@@ -6,8 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    tools:context=".ui.main.mainScreen.ListerFragment">
+    tools:context=".ui.main.mainScreen.ListerFragment"
+    android:theme="@style/defaultStyle">
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/gradient2"
+        android:scaleType="centerCrop"/>
     <TextView
         android:id="@+id/popularTitle"
         android:layout_width="wrap_content"
