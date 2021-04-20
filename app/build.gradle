@@ -17,23 +17,67 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    signingConfigs {
+        release {
+            /* storeFile file("keystore.jks")
+             storePassword "BuildConfig.REL_PASS"
+             keyAlias 'kraym'
+             keyPassword 'as725000'*/
+        }
+    }
     buildFeatures {
         viewBinding true
     }
+    buildTypes.each {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file("keys.properties").newDataInputStream())
+        def apiKey = properties.getProperty("tmdb_api_key", "")
+        it.buildConfigField "String", "TMDB_API_KEY", apiKey
+    }
+
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        beta {
+            initWith debug
+            versionNameSuffix ".beta"
+        }
+
     }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    flavorDimensions 'theme'
+    productFlavors {
+        light {
+            dimension 'theme'
+            versionNameSuffix '.light'
+
+        }
+        dark {
+            dimension 'theme'
+            versionNameSuffix '.dark'
+        }
+    }
 }
 
+Properties props = new Properties()
+def propFile = new File('keys.properties')
+if (propFile.canRead()) {
+    props.load(new FileInputStream(propFile))
+    android.signingConfigs.release.storeFile = file("keystore.jks")
+    android.signingConfigs.release.storePassword = props['release_pass']
+    android.signingConfigs.release.keyAlias = props['key_alias']
+    android.signingConfigs.release.keyPassword = props['release_pass']
+} else {
+    println 'keys.properties not found'
+    android.buildTypes.release.signingConfig = null
+}
 
 dependencies {
     //Gmap
